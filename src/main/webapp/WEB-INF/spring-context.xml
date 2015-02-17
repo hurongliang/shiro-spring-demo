@@ -5,7 +5,24 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	<context:property-placeholder location="classpath:conf.properties" ignore-unresolvable="true" />
+	
 	<context:component-scan base-package="com.hurl.shirospringdemo.domain"></context:component-scan>
+	
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="minPoolSize" value="3" />
+		<property name="initialPoolSize" value="5"></property>
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize}" />
+		<property name="maxIdleTime" value="50" />
+		<property name="maxStatements" value="100"/>
+		<property name="numHelperThreads" value="3"/>
+		<property name="idleConnectionTestPeriod" value="58" />
+	</bean>
 	
 	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
 		<property name="securityManager" ref="securityManager" />
@@ -24,8 +41,9 @@
 		<property name="realm" ref="myRealm" />
 	</bean>
 	
-	<bean id="myRealm" class="org.apache.shiro.realm.text.IniRealm">
-		<property name="resourcePath" value="classpath:shiro.ini"></property>
+	<bean id="myRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="authenticationQuery" value="select password from t_users where username = ?"/>
 	</bean>
 	
 	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />

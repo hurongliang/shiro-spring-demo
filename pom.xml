@@ -77,6 +77,6 @@
 	</build>
 	<properties>
 		<shiro.version>1.2.2</shiro.version>
-		<spring.version>3.2.5.RELEASE</spring.version>
+		<spring.version>3.2.8.RELEASE</spring.version>
 	</properties>
 </project>
